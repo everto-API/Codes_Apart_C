@@ -1,0 +1,12 @@
+
+#include <stdio.h>
+
+int main(void) {
+    int salario[1];
+    float porcentagem[1];
+    float aumento;
+    scanf("%i", &salario[0]);
+    scanf("%f", &porcentagem[0]);
+    aumento = (salario[0] + (salario[0] * (porcentagem[0]/100)));
+    printf("Seu salario teve aumento de %.0f.0 %, passando de R$ %i.0 para R$ %.1f", porcentagem[0], salario[0], aumento);
+}
