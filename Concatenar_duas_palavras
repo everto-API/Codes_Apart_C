@@ -1,14 +1,11 @@
 
 #include <stdio.h>
-#include <string.h>
 
-int main() {
-    char nome[20];
-    char parque[20];
-    fgets(nome, sizeof(nome), stdin);
-    nome[strcspn(nome, "\n")] = 0;
-    fgets(parque, sizeof(parque), stdin);
-    parque[strcspn(parque, "\n")] = 0;
-    printf("Bem-vindo %s! Aguardamos você na/o %s!", nome, parque);
-    
+int main(void) {
+    char nome[20], parque[20];
+    printf("Insira o seu nome e sobrenome.\n> ");
+    scanf("%[^\n]s", &nome);
+    printf("\nDigite o nome do local que você irá.\n> ");
+    scanf(" %[^\n]s", &parque);
+    printf("\nBem-vindo %s! Aguardamos você na/o %s", nome, parque);
 }
