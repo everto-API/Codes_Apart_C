@@ -1,0 +1,25 @@
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    int num;
+    int decision;
+    while (1) {
+        printf("\nDigite o número para criar uma tabuada de 10.\n> ");
+        if (scanf("%i", &num) != 1) {
+            printf("\nERRO na leitura, código desligando...");
+            break;
+        }
+        for (int k = 0; k <= 10; k++) {
+            int mult = num * k;
+            printf("%i x %i = %i\n", num, k, mult);
+        }
+        printf("\nVocê deseja criar outra tabela? 1 - Sim\n> ");
+        scanf("%i", &decision);
+        if (decision != 1) {
+            printf("\nAté mais!");
+            break;    
+        }
+    }
+}
