@@ -1,0 +1,25 @@
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char palavra[15], caractere;
+    int tamanho_da_palavra, encontrado = 0;
+    
+    printf("Escreva sua palavra (com até 15 caracteres e em caixa baixa).\n> ");
+    scanf("%[^\n]", palavra);
+    printf("\nEscreva um caractere.\n> ");
+    scanf(" %c", &caractere);
+    tamanho_da_palavra = strlen(palavra);
+    for (int i = 0; i < tamanho_da_palavra; i++) {
+        if (caractere == palavra[i]) {
+            printf("\nPosição de %c: [%iª posição]", caractere, i+1);
+            encontrado = 1;
+            break;
+        }
+    } 
+    if (!encontrado) {
+        printf("\nCaractere '%c' não incluso na palavra!", caractere);
+    }
+    return 0;
+}
