@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+struct ficha {
+    char nome[50];
+    float media, frequencia;
+    float nota1_aluno, nota2_aluno, nota3_aluno;
+    int aprovado;
+};
+typedef struct ficha ficha;
+ficha aluno;
+FILE *arquivo;
+int tamanho = sizeof(ficha);
+
+void IncluirAluno() {
+    float nota1, nota2, nota3, frequencia_temp;
+    fseek(arquivo, 0, SEEK_END);
+    printf("\n-- Incluir Novo Aluno --\n");
+    printf("Nome do aluno: ");
+    scanf(" %[^\n]", aluno.nome);
+    printf("1ª nota: ");
+    scanf("%f", &nota1);
+    if (nota1 < 0 || nota1 > 10) {printf("Nota inválida!\n"); return;}
+    aluno.nota1_aluno = nota1;
+    printf("2ª nota: ");
+    scanf("%f", &nota2);
+    if (nota2 < 0 || nota2 > 10) {printf("Nota inválida!\n"); return;}
+    aluno.nota2_aluno = nota2;
+    printf("3ª nota: ");
+    scanf("%f", &nota3);
+    if (nota3 < 0 || nota3 > 10) {printf("Nota inválida!.\n"); return;}
+    aluno.nota3_aluno = nota3;
+    aluno.media = (nota1 + nota2 + nota3) / 3.0;
+    printf("Frequência (em porcentagem): ");
+    scanf("%f", &frequencia_temp);
+    if (frequencia_temp < 0 || frequencia_temp > 100) {printf("Frequência inválida!\n"); return;}
+    aluno.frequencia = frequencia_temp;
+    if (aluno.media >= 7.0 && aluno.frequencia >= 65.0) {aluno.aprovado = 1;} 
+    else {aluno.aprovado = 0;}
+    fwrite(&aluno, tamanho, 1, arquivo);
+};
+void ListarAlunos() {
+    printf("\n-- Listar todos os alunos --\n");
+    fseek(arquivo, 0, SEEK_SET);
+    while (fread(&aluno, tamanho, 1, arquivo) == 1) {
+        printf("Nome: %s\n", aluno.nome);
+        printf("1ª Nota: %.2f\n", aluno.nota1_aluno);
+        printf("2ª Nota: %.2f\n", aluno.nota2_aluno);
+        printf("3ª Nota: %.2f\n", aluno.nota3_aluno);
+        printf("Média: %.2f\n", aluno.media);
+        printf("Frequência: %.2f%%\n", aluno.frequencia);
+        if (aluno.aprovado == 1) {
+            printf("Situação: Aprovado\n\n");
+        } else {
+            printf("Situação: Reprovado\n\n");
+        }
+    }
+};
+
+int main() {
+    printf("-- Sistema de Cadastro de Alunos --\n");
+    arquivo = fopen("cadastro_alunos.dat", "r+b");
+    if (arquivo == NULL) {
+        arquivo = fopen("cadastro_alunos.dat", "w+b");
+    }
+    char option;
+
+    do {
+        printf("\nSelecione uma opção:\n");
+        printf("I - Incluir novo aluno\n");
+        printf("L - Listar todos os alunos\n");
+        printf("S - Sair\n\n> ");
+        scanf(" %c", &option);
+        option = toupper(option);
+        switch (option) {
+            case 'I': IncluirAluno(); break;
+            case 'L': ListarAlunos(); break;
+        } 
+    } while (option != 'S');
+    fclose(arquivo);
+    return 0;
+}
