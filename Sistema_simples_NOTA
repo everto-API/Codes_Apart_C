@@ -1,0 +1,74 @@
+
+#include <stdio.h>
+
+int main(void) {
+    
+    // Variáveis e definições que serão usadas no final da leitura dos dados;
+    #define num_alunos 80
+    #define num_notas 3
+    #define frequencia_minima 65.0
+    float media_global = 0.0;
+    
+    // ESTRUTURA PARA CONSTRUIR OS DADOS PARA CADA ALUNO;
+    struct AprendaProgramacao {
+        char nome[50];
+        float notas[3];
+        float frequencia;
+        float media;
+    };
+    struct AprendaProgramacao lista_pessoas[num_alunos];
+    
+    // BLOCO PARA RECEBER O NOME, FREQUÊNCIA E NOTAS DE CADA ALUNO;
+    for (int x = 0; x < num_alunos; x++) {
+        float soma_local = 0.0;
+        
+        printf("\nNome do %iº aluno: ", x+1);
+        scanf("%s", lista_pessoas[x].nome);
+        printf("Frequência (de 0.0 à 100.0): ");
+        scanf("%f", &lista_pessoas[x].frequencia);
+        
+        for (int y = 0; y < num_notas; y++) {
+            printf("%dª Nota: ", y+1);
+            scanf("%f", &lista_pessoas[x].notas[y]);
+            soma_local += lista_pessoas[x].notas[y];
+        }
+        float media_local = soma_local/3;
+        lista_pessoas[x].media = media_local;
+        media_global += media_local;
+    };
+    
+    // Cálculo para gerar a média global e a nota mínima para o aluno passar;
+    media_global = media_global/num_alunos;
+    
+    printf("\n        -- SITUÇÃO FINAL --");
+    printf("\nCritérios para aprovação: [Media >= %.2f] e [Frequência >= %.2f]\n", media_global, frequencia_minima);
+    // Bloco para separar os alunos que foram aprovados e reprovados
+    for (int x = 0; x < num_alunos; x++) {
+        if (lista_pessoas[x].media >= media_global && lista_pessoas[x].frequencia >= frequencia_minima) {
+            printf("\n%s [Média: %.2f; Frequencia: %.2f] - APROVADO", lista_pessoas[x].nome, lista_pessoas[x].media, lista_pessoas[x].frequencia);
+        } else {
+            printf("\n%s [Média: %.2f; Frequencia: %.2f] - REPROVADO", lista_pessoas[x].nome, lista_pessoas[x].media, lista_pessoas[x].frequencia);
+        } 
+    };
+}
+
+// SAÍDA (com 2 alunos)
+/*
+Nome do 1º aluno: Everton
+Frequência (de 0.0 à 100.0): 100
+1ª Nota: 7.5
+2ª Nota: 8.9
+3ª Nota: 9.3
+
+Nome do 2º aluno: Carlos
+Frequência (de 0.0 à 100.0): 70
+1ª Nota: 6.5
+2ª Nota: 2.3
+3ª Nota: 0.9
+
+        -- SITUÇÃO FINAL --
+Critérios para aprovação: [Media >= 5.90] e [Frequência >= 65.00]
+
+Everton [Média: 8.57; Frequencia: 100.00] - APROVADO
+Carlos [Média: 3.23; Frequencia: 70.00] - REPROVADO
+*/
