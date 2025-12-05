@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+/*
+
+fopen       Serve para abrir um arquivo em um modo específico
+fseek       Guia o ponteiro para uma posição específica no arquivo
+fread       Comando para ler o conteúdo do arquivo
+fwrite      Comando para escrever o conteúdo no arquivo
+fclose      Fecha o arquivo lógico
+
+*/
+
+struct Produto {
+        char nome[50];
+        float preco;
+        int quantidade, ativo;}; 
+typedef struct Produto Produto;
+Produto prod;
+FILE *Dados;
+long int Tamanho = sizeof(Produto);
+
+// Inclusão de produtos não repetidos
+void Incluir() {
+    char resposta, nomeTemp[50];
+    int existe; 
+    Produto prodBusca; 
+
+    do {
+        existe = 0;
+        printf("\n-- Incluir Novo Produto --\n");
+        printf("Nome do produto: ");
+        scanf(" %s", nomeTemp);
+        fseek(Dados, 0, SEEK_SET); 
+
+        // Bloco while para ler o caderno INTEIRO;
+        while (fread(&prodBusca, Tamanho, 1, Dados) == 1) {
+            // SE o nome novo e o nome inserido no caderno for igual, existe = 1;
+            if (strcmp(nomeTemp, prodBusca.nome) == 0) {
+                existe = 1;
+                break;}}
+        // se existe = 1, não o usuário tentou inserir o mesmo nome;
+        if (existe == 1) {
+            printf("Produto já incluso no sistema!\n");
+        } else {
+            strcpy(prod.nome, nomeTemp); 
+            
+            printf("Preço do produto: ");
+            scanf("%f", &prod.preco);
+            printf("Quantidade em estoque: ");
+            scanf("%d", &prod.quantidade);
+            prod.ativo = 1;
+            fseek(Dados, 0, SEEK_END);
+            
+            fwrite(&prod, Tamanho, 1, Dados);
+        }
+
+        printf("\nNova inclusão? (S/N): ");
+        fflush(stdin);
+        scanf(" %c", &resposta);
+        resposta = toupper(resposta);
+    } while (resposta == 'S');
+}
+// Exclusão lógica: apenas marcar o produto como inativo
+void Excluir() {
+    char nomeExcluir[50];
+    int achou = 0;
+    printf("-- Excluir produto --\n");
+    fseek(Dados, 0, SEEK_SET);
+    printf("Qual produto deseja excluir? ");
+    scanf(" %s", nomeExcluir);
+    // BLOCO while para fazer com que o programa só pare ao encontrar o produto e/ou chegar no fim do arquivo
+    while (fread(&prod, Tamanho, 1, Dados) == 1) {
+        // BLOCO se o nome digitado for igual ao nome do produto lido do arquivo
+        if (strcmp(nomeExcluir, prod.nome) == 0) {
+            prod.ativo = 0;
+            // Este código serve para voltar o ponteiro para o local correto do produto que será alterado
+            long int pos = ftell(Dados) - Tamanho;
+            fseek(Dados, pos, SEEK_SET);
+            // Reescreve o produto com o campo ativo alterado para 0
+            fwrite(&prod, Tamanho, 1, Dados);
+            achou = 1;
+            break;
+        }
+    }
+    if (achou == 1) {
+        printf("Produto excluído com sucesso!\n");
+    } else {
+        printf("Produto não encontrado!\n"); }
+};
+void Alterar() {
+    char nomeAlterar[50];
+    int achou = 0;
+    printf("-- Alterar produto --\n");
+    fseek(Dados, 0, SEEK_SET);
+    printf("Qual produto deseja alterar? ");
+    scanf(" %s", nomeAlterar);
+   
+    while (fread(&prod, Tamanho, 1, Dados) == 1) {
+        if (strcmp(nomeAlterar, prod.nome) == 0 && prod.ativo == 1) {
+            printf("Novo preço do produto: ");
+            scanf("%f", &prod.preco);
+            printf("Nova quantidade em estoque: ");
+            scanf("%d", &prod.quantidade);
+            long int pos = ftell(Dados) - Tamanho;
+            fseek(Dados, pos, SEEK_SET);
+            fwrite(&prod, Tamanho, 1, Dados);
+            achou = 1;
+            break;
+        }
+    }
+
+    if (achou == 0) {
+        printf("Produto não encontrado!\n");
+    }
+};
+void Consultar() {
+    char nomeConsultar[50];
+    int achou = 0;
+    fseek(Dados, 0, SEEK_SET);
+    printf("-- Consultar produto --\n");
+    printf("Qual produto deseja consultar? ");
+    scanf(" %s", nomeConsultar);
+    
+    while (fread(&prod, Tamanho, 1, Dados) == 1) {
+        // BLOCO se (o nome digitado for igual ao nome do produto lido do arquivo) E (o produto estiver ativo)
+        if (strcmp(nomeConsultar, prod.nome) == 0 && prod.ativo == 1) {
+            printf("Nome: %s\n", prod.nome);
+            printf("Preço: %.2f\n", prod.preco);
+            printf("Quantidade: %d\n", prod.quantidade);
+            achou = 1;
+        }
+    }
+    if (achou == 0) {
+        printf("Produto não encontrado!\n");
+    }
+};
+void ListarTodos() {
+    printf("-- Listar todos os produtos --\n");
+    fseek(Dados, 0, SEEK_SET);
+    while (fread(&prod, Tamanho, 1, Dados) == 1) {
+        if (prod.ativo == 1) {
+            printf("Nome: %s\n", prod.nome);
+            printf("Preço: %.2f\n", prod.preco);
+            printf("Quantidade: %d\n", prod.quantidade);
+        }
+    }
+};
+
+int main() {
+
+    // o modo "a+b" é traiçoeiro, pois o PONTEIRO SEMPRE vai para o final do arquivo
+    Dados = fopen("farmacia.dat", "r+b");
+    if (Dados == NULL) {
+        Dados = fopen("farmacia.dat", "w+b");
+    }
+    char opt;
+    do {
+        printf("-- Sistema da Farmácia AlmaViva --\n\n");
+        printf("Escolha uma opção:\n");
+        printf("I - Incluir novo produto\n");
+        printf("E - Excluir produto\n");
+        printf("A - Alterar produto\n");
+        printf("C - Consultar produto\n");
+        printf("T - Listar todos os produtos\n");
+        printf("S - Sair\n\n");
+        scanf(" %c", &opt);
+        opt = toupper(opt);
+        switch (opt) {
+            case 'I' : Incluir(); break;
+            case 'E' : Excluir(); break;
+            case 'A' : Alterar(); break;
+            case 'C' : Consultar(); break;
+            case 'T' : ListarTodos(); break;} } while (opt != 'S');
+    fclose(Dados);
+    return 0;
+}
