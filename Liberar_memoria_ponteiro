@@ -1,0 +1,56 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    
+    struct TpReg{
+	    char Simbolo;
+	    void *Prox; // Esta variável é a usada para criar o encadeamento
+    };
+    typedef struct TpReg TpLetra;
+    
+    TpLetra *Anterior, *Atual, *Proximo; // Criando os ponteiros da struct
+    char Dado;
+    
+    Anterior=NULL;
+    scanf(" %c",&Dado);
+    while (Dado != '*'){
+        Atual = (TpLetra*) malloc(sizeof(TpLetra)); // Alocando um espaço de memória para o NÓ atual
+        
+        Atual->Simbolo = Dado; // Símbolo receberá o caractere
+        Atual->Prox = Anterior; // Prox receberá o endereço armazenado em Anterior
+        Anterior = Atual; // Anterior recebe o valor do novo nó
+        scanf(" %c", &Dado); 
+    };
+    while (Atual != NULL){
+        printf("%c ", Atual->Simbolo);
+        Atual = Atual->Prox; 
+    };
+    /* 
+    Para liberar a memória de cada lista dinâmica, nós iremos
+    usar a variável Anterior;
+    Isto se dá pois no final do primeiro bloco while, Anterior
+    aponta para o endereço de memória superior do bloco de listas
+    Se dissermos que Atual = Anterior, significa que a lista
+    reiniciará;
+    O segundo bloco while APENAS IMPRIME os caracteres
+    A lista dinâmica continua salva (em algum lugar da memória)
+    */ 
+    Atual = Anterior;
+    printf("\nLimpando a memória alocada...\n");
+    while (Atual != NULL) {
+        // Para o código não dar erro ao liberar o ponteiro Atual
+        // Precisamos de uma variável auxiliar para manter a lógica
+        // Foi produzido um novo ponteiro - Proximo - para isto
+        
+        // Esta linha diz o seguinte:
+        // "Pegue o endereço guardado em Atual->Prox e converta
+        //  este endereço para um ponteiro do tipo TpLetra"
+        Proximo = (TpLetra*)Atual->Prox;
+        // exemplo, Ponteiro aponta para o nó anterior "B" e liberamos a lista Atual que está com o nó "C"
+        printf("\nLista do caractere %c apagada.", Atual->Simbolo);
+        free(Atual);
+        Atual = Proximo;
+    }
+}
