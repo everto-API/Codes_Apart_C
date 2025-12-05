@@ -1,0 +1,14 @@
+
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    int num;
+    printf("Digite um número para testa-lo se é ímpar ou par.\n> ");
+    scanf("%i", &num);
+    if ((num % 2) == 1) {
+        printf("É ímpar!");
+    } else {
+        printf("É par!");
+    }
+}
