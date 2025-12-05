@@ -1,0 +1,35 @@
+
+#include <stdio.h>
+
+int main(void){
+    
+    // variáveis para desenvolvimento do código
+    int  quantidade_vendedores = 12, quantidade_lojas = 5;
+    char lojas[5][20] = {"perfumaria", "sapataria", "joalheria", "papelaria", "cervejaria"};
+    float venda = 0, valor_total_por_vendedor = 0, valor_total_global = 0, total_de_cada_vendedor[4];
+    
+    // bloco for com o objetivo de receber os valores de venda de cada vendedor
+    for (int x = 0; x < quantidade_vendedores; x++) {
+        valor_total_por_vendedor = 0;
+        printf("\nOlá vendedor Nº %d!\n", x+1);
+        
+        // bloco for com o objetivo de pegar as 5 vendas do vendedor x
+        for (int y = 0; y < quantidade_lojas; y++) {
+            printf("Insira o valor de sua venda do produto na %dª (%s): R$", y+1, lojas[y]);
+            scanf(" %f", &venda);
+            
+            valor_total_por_vendedor += venda;
+        }
+        
+        // variáveis que irão somar o valor total para imprimir no final e o valor somado de cada venda de cada vendedor
+        valor_total_global += valor_total_por_vendedor;
+        total_de_cada_vendedor[x] = valor_total_por_vendedor;
+    };
+    printf("\nProcessando o extrato final...");
+    
+    // bloco for com o objetivo de imprimir o total de vendas de cada vendedor
+    for (int x = 0; x < quantidade_vendedores; x++) {
+        printf("\nVendas totais do vendedor Nº %d = R$%.2f", x+1, total_de_cada_vendedor[x]);
+    }
+    printf("\n\nValor geral do dia = R$%.2f", valor_total_global);
+}
